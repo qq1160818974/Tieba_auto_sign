@@ -193,18 +193,21 @@ if __name__ == "__main__":
 
     # ---------- Server酱推送 ----------
     if "SENDKEY" in os.environ:
-        api = f'https://sctapi.ftqq.com/{os.environ["SENDKEY"]}.send'
-        title = "贴吧签到报告"
-        data = {"text": title, "desp": notice}
-        try:
-            resp = requests.post(api, data=data, timeout=30)
-            if resp.status_code == 200:
-                print("\n📧 Server酱通知成功")
+    api = f'https://sctapi.ftqq.com/{os.environ["SENDKEY"]}.send'
+    title = "贴吧签到报告"
+    data = {"title": title, "desp": notice}
+    try:
+        resp = requests.post(api, data=data, timeout=30)
+        if resp.status_code == 200:
+            result = resp.json()
+            if result.get("code") == 0:
+                print("✅ 推送成功")
             else:
-                print(f"\n⚠️ Server酱失败，状态码：{resp.status_code}")
-        except Exception as e:
-            print(f"\n⚠️ 通知异常：{e}")
-    else:
-        print("\n📭 未配置 SENDKEY，跳过推送")
-
-    print("\n🏁 程序运行结束")
+                print(f"❌ 推送失败，错误码：{result.get('code')}，消息：{result.get('message')}")
+        else:
+            print(f"❌ HTTP 错误：{resp.status_code}")
+            print(resp.text)
+    except Exception as e:
+        print(f"❌ 推送异常：{e}")
+else:
+    print("📭 未配置 SENDKEY，跳过推送")
