@@ -192,22 +192,24 @@ if __name__ == "__main__":
     notice += '\n' + summary
 
     # ---------- Server酱推送 ----------
-    if "SENDKEY" in os.environ:
-    api = f'https://sctapi.ftqq.com/{os.environ["SENDKEY"]}.send'
-    title = "贴吧签到报告"
-    data = {"title": title, "desp": notice}
-    try:
-        resp = requests.post(api, data=data, timeout=30)
-        if resp.status_code == 200:
-            result = resp.json()
-            if result.get("code") == 0:
-                print("✅ 推送成功")
+    # ---------- Server酱推送 ----------
+    if "SendKey" in os.environ:  # 与你的环境变量名一致
+        api = f'https://sctapi.ftqq.com/{os.environ["SendKey"]}.send'
+        title = "贴吧签到报告"
+        data = {"title": title, "desp": notice}
+        headers = {"Content-Type": "application/x-www-form-urlencoded"}
+        try:
+            resp = requests.post(api, data=data, headers=headers, timeout=30)
+            if resp.status_code == 200:
+                result = resp.json()
+                if result.get("code") == 0:
+                    print("✅ 推送成功")
+                else:
+                    print(f"❌ 推送失败，错误码：{result.get('code')}，消息：{result.get('message')}")
             else:
-                print(f"❌ 推送失败，错误码：{result.get('code')}，消息：{result.get('message')}")
-        else:
-            print(f"❌ HTTP 错误：{resp.status_code}")
-            print(resp.text)
-    except Exception as e:
-        print(f"❌ 推送异常：{e}")
-else:
-    print("📭 未配置 SENDKEY，跳过推送")
+                print(f"❌ HTTP 错误：{resp.status_code}")
+                print(resp.text)
+        except Exception as e:
+            print(f"❌ 推送异常：{e}")
+    else:
+        print("📭 未配置 SendKey，跳过推送")
