@@ -155,7 +155,7 @@ if __name__ == "__main__":
                         else:
                             msg = f"⚠️ {name}吧：签到状态未知"
                     print(msg)
-                    notice += msg + '\n'
+                    notice += msg + '\n\n'
                 else:
                     msg = f"❓ {name}吧：未找到签到按钮"
                     print(msg)
